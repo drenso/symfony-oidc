@@ -30,7 +30,7 @@ use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\HasClaimWithValue;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
-use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\PermissiveValidAt;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
@@ -185,15 +185,15 @@ class OidcJwtHelper
     }
 
     // Default claims
-    $constraints          = [];
-    $issuedByConstraint   = new IssuedBy($issuer);
-    $looseValidConstraint = new LooseValidAt($this->getClock(), new DateInterval("PT{$this->leewaySeconds}S"));
+    $constraints               = [];
+    $issuedByConstraint        = new IssuedBy($issuer);
+    $permissiveValidConstraint = new PermissiveValidAt($this->getClock(), new DateInterval("PT{$this->leewaySeconds}S"));
 
     switch ($tokenType) {
       case OidcTokenType::ID:
         $constraints = [
           $issuedByConstraint,
-          $looseValidConstraint,
+          $permissiveValidConstraint,
           new PermittedFor($this->clientId),
         ];
 
@@ -231,7 +231,7 @@ class OidcJwtHelper
         if ($token->claims()->has(RegisteredClaims::ISSUED_AT)
           && $token->claims()->has(RegisteredClaims::NOT_BEFORE)
           && $token->claims()->has(RegisteredClaims::EXPIRATION_TIME)) {
-          $constraints[] = $looseValidConstraint;
+          $constraints[] = $permissiveValidConstraint;
         }
 
         if (empty($constraints) && empty($additionalConstraints)) {

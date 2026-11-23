@@ -1,5 +1,9 @@
 This file describes the steps you will need to make when upgrading this bundle.
 
+# From 4.5 to 4.6
+
+  - We are now using the `PermissiveValidAt` constraint as replacement for the `LooseValidAt` constraint. This can impact your implementation, see https://github.com/lcobucci/jwt/releases/tag/5.7.0 / https://github.com/lcobucci/jwt/pull/1195. 
+
 # From 3.x to 4.0
 
   - `OidcTokens` is added as a parameter to `Drenso\OidcBundle\Security\UserProvider\OidcUserProviderInterface::ensureUserExists()` method. To upgrade please add this parameter to your implementation of `OidcUserProviderInterface::ensureUserExists()`.
